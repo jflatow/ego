@@ -1,0 +1,21 @@
+===
+ego
+===
+
+A place for data-based geo-services, which could potentially include::
+
+  - common data structures & functions for working with geo-data
+  - IP => location
+  - lat, lng => location
+  - location => timezone
+  - location, utc time => local time
+  - location, local time => utc time
+
+Provided as an embeddable Erlang library.
+
+GeoIP
+=====
+
+This library includes bindings for GeoIP2:
+
+ https://github.com/maxmind/MaxMind-DB
