@@ -70,6 +70,8 @@ meta(Root) ->
 
 find(#db{ip_version=6} = G, {A, B, C, D}) ->
     find(G, {0, 0, 0, 0, 0, 16#ffff, (A bsl 8) bor B, (C bsl 8) bor D});
+find(G, Addr) when is_binary(Addr) ->
+    find(G, binary_to_list(Addr));
 find(G, Addr) when is_list(Addr) ->
     {ok, IP} = inet:parse_address(Addr),
     find(G, IP);
