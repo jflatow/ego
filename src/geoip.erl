@@ -5,13 +5,6 @@
          find/2,
          find/3]).
 
--export([node/2,
-         decode/2,
-         decode/3,
-         bits/2,
-         path/1,
-         ipv6/1]).
-
 -record(db, {root,
              meta,
              ip_version,
@@ -72,8 +65,8 @@ meta(Root) ->
     {Pos, Len} = binary:match(Root, ?MetaMagic, [{scope, {size(Root), -?MetaMax}}]),
     value(#db{root=Root}, Pos + Len).
 
-find(#db{ip_version=6} = G, {_, _, _, _} = IP) ->
-    find(G, ipv6(IP));
+find(#db{ip_version=6} = G, {A, B, C, D}) ->
+    find(G, {0, 0, 0, 0, 0, 16#ffff, (A bsl 8) bor B, (C bsl 8) bor D});
 find(G, Addr) when is_list(Addr) ->
     {ok, IP} = inet:parse_address(Addr),
     find(G, IP);
@@ -88,7 +81,6 @@ find(G, [0|Path], {L, _}) ->
     find(G, Path, node(G, L));
 find(G, [1|Path], {_, R}) ->
     find(G, Path, node(G, R)).
-
 
 node(#db{node_count=N}, N) ->
     {stop, undefined};
@@ -130,9 +122,7 @@ decode(_, <<0:3, 1:5, 7, R/binary>>) ->
 decode(_, <<0:3, 0:5, 7, R/binary>>) ->
     {false, R};
 decode(_, <<0:3, 4:5, 8, F:32/float, R/binary>>) ->
-    {F, R};
-decode(_, <<T:3, S:5, E, R/binary>>) ->
-    {{bad, T, S, E}, R}.
+    {F, R}.
 
 decode(_, {len, S}, Data) when S < 29 ->
     {S, Data};
@@ -200,8 +190,3 @@ path({A, B, C, D}) ->
 path({A, B, C, D, E, F, G, H}) ->
     bits((A bsl 112) bor (B bsl 96) bor (C bsl 80) bor (D bsl 64)
          bor (E bsl 48) bor (F bsl 32) bor (G bsl 16) bor H, 128).
-
-ipv6({A, B, C, D}) ->
-    {0, 0, 0, 0, 0, 16#ffff, (A bsl 8) bor B, (C bsl 8) bor D};
-ipv6({_, _, _, _, _, _, _, _} = IP) ->
-    IP.
