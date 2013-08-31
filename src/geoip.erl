@@ -2,6 +2,7 @@
 
 -export([open/0,
          open/1,
+         load/1,
          find/2,
          find/3]).
 
@@ -22,7 +23,9 @@ open() ->
     open(priv(?MODULE)).
 
 open(Path) ->
-    Root = load(Path),
+    load(read(Path)).
+
+load(Root) ->
     Meta = meta(Root),
     IPVersion = proplists:get_value(<<"ip_version">>, Meta),
     NodeCount = proplists:get_value(<<"node_count">>, Meta),
@@ -50,7 +53,7 @@ priv(Name) ->
               end,
     filename:join(PrivDir, Name).
 
-load(Path) ->
+read(Path) ->
     case file:read_file(Path) of
         {ok, Data} ->
             case filename:extension(Path) of
@@ -188,5 +191,4 @@ bits(I, Size) ->
 path({A, B, C, D}) ->
     bits((A bsl 24) bor (B bsl 16) bor (C bsl 8) bor D, 32);
 path({A, B, C, D, E, F, G, H}) ->
-    bits((A bsl 112) bor (B bsl 96) bor (C bsl 80) bor (D bsl 64)
-         bor (E bsl 48) bor (F bsl 32) bor (G bsl 16) bor H, 128).
+    bits((A bsl 112) bor (B bsl 96) bor (C bsl 80) bor (D bsl 64) bor (E bsl 48) bor (F bsl 32) bor (G bsl 16) bor H, 128).
