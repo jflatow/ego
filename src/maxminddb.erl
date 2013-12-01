@@ -1,4 +1,4 @@
--module(geoip).
+-module(maxminddb).
 
 -export([open/0,
          open/1,
