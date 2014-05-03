@@ -23,7 +23,7 @@ priv/geonames:
 	mkdir -p $@
 
 priv/geonames/%.zip: SRC = http://download.geonames.org/export/zip
-priv/geonames/%.zip: priv/geonames
+priv/geonames/%.zip: | priv/geonames
 	curl $(SRC)/$*.zip -o $@
 
 priv/geonames/%.txt: | priv/geonames/%.zip
