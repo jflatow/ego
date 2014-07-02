@@ -1,4 +1,14 @@
 %% -*- erlang -*-
-{application, ego,
- [{vsn, []},
-  {applications, [kernel, stdlib]}]}.
+{application, ego, [
+    {description, "Ego"},
+    {vsn, []},
+    {modules, [
+        geoip_app,
+        geoip_sup,
+        lookup_handler
+    ]},
+    {applications, [
+        kernel, 
+        stdlib
+    ]}
+]}.
