@@ -109,10 +109,15 @@ decode(_, <<0:3, 4:5, 8, F:32/float, R/binary>>) ->
 
 decode(_, {len, S}, Data) when S < 29 ->
     {S, Data};
-decode(_, {len, S}, Data) ->
-    Size = S - 29,
-    <<L:Size, R/binary>> = Data,
+decode(_, {len, 29}, Data) ->
+    <<L:1/unsigned-integer-unit:8, R/binary>> = Data,
     {L + 29, R};
+decode(_, {len, 30}, Data) ->
+    <<L:2/unsigned-integer-unit:8, R/binary>> = Data,
+    {L + 285, R};
+decode(_, {len, 31}, Data) ->
+    <<L:3/unsigned-integer-unit:8, R/binary>> = Data,
+    {L + 65821, R};
 
 decode(G, {binary, S}, Data) ->
     {Len, Rest} = decode(G, {len, S}, Data),
