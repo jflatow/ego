@@ -23,7 +23,10 @@ open() ->
     open(ego:priv(geoip)).
 
 open(Path) ->
-    load(ego:read(Path)).
+    case ego:read(Path) of
+        {error, Error} -> {error, Error};
+        Data -> load(Data)
+    end.
 
 load(Root) ->
     Meta = meta(Root),
