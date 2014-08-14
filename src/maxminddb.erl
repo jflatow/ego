@@ -4,7 +4,8 @@
          open/1,
          load/1,
          find/2,
-         find/3]).
+         find/3,
+         get_meta/1]).
 
 -record(db, {root,
              meta,
@@ -44,6 +45,9 @@ load(Root) ->
         record_left=RecordSize - RecordHalf,
         tree_size=TreeSize,
         data_offs=TreeSize + 16}.
+
+
+get_meta(#db{meta=M}) -> M.
 
 meta(Root) ->
     {ok, Offs} = find_meta(byte_size(Root) - ?MetaSize, Root),
