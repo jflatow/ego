@@ -2,6 +2,7 @@
 {application, ego, [
     {description, "Ego"},
     {vsn, []},
+    {registered, []},
     {modules, [
         geoip_app,
         geoip_sup,
