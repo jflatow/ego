@@ -22,5 +22,8 @@ read(Path) ->
                     zlib:gunzip(Data);
                 _ ->
                     Data
-            end
+            end;
+
+        {error, Error} ->
+            {error, Error}
     end.

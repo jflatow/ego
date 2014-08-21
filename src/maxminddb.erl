@@ -4,7 +4,8 @@
          open/1,
          load/1,
          find/2,
-         find/3]).
+         find/3,
+         get_meta/1]).
 
 -record(db, {root,
              meta,
@@ -16,14 +17,17 @@
              tree_size,
              data_offs}).
 
--define(MetaMagic, <<16#abcdef:24, "MaxMind.com">>).
--define(MetaMax, 20000).
+-define(MetaMagic, 16#abcdef:24, "MaxMind.com").
+-define(MetaSize, 14).
 
 open() ->
     open(ego:priv(geoip)).
 
 open(Path) ->
-    load(ego:read(Path)).
+    case ego:read(Path) of
+        {error, Error} -> {error, Error};
+        Data -> load(Data)
+    end.
 
 load(Root) ->
     Meta = meta(Root),
@@ -42,9 +46,22 @@ load(Root) ->
         tree_size=TreeSize,
         data_offs=TreeSize + 16}.
 
+
+get_meta(#db{meta=M}) -> M.
+
 meta(Root) ->
-    {Pos, Len} = binary:match(Root, ?MetaMagic, [{scope, {size(Root), -?MetaMax}}]),
-    value(#db{root=Root}, Pos + Len).
+    {ok, Offs} = find_meta(byte_size(Root) - ?MetaSize, Root),
+    value(#db{root=Root}, Offs).
+
+find_meta(0, _) ->
+    {error, notfound};
+find_meta(Offs, Buff) ->
+    case Buff of
+        <<_Start:Offs/binary, ?MetaMagic, _Meta/binary>> ->
+            {ok, Offs+?MetaSize};
+        _ ->
+            find_meta(Offs - 1, Buff)
+    end.
 
 find(#db{ip_version=6} = G, {A, B, C, D}) ->
     find(G, {0, 0, 0, 0, 0, 16#ffff, (A bsl 8) bor B, (C bsl 8) bor D});
