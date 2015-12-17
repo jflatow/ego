@@ -1,4 +1,5 @@
 %% -*- erlang -*-
 {application, ego,
- [{vsn, []},
+ [{vsn, git},
+  {description, "Erlang (data-based) geo-services"},
   {applications, [kernel, stdlib]}]}.
