@@ -1,3 +1,7 @@
+*.beam
+*.d
+*.plt
 deps/
 ebin/
 priv/
+erlang.mk

@@ -1,11 +1,21 @@
-REBAR = rebar
+export ERLANG_MK ?= $(CURDIR)/erlang.mk
 
-.PHONY: rebar data
+PROJECT = ego
+PROJECT_DESCRIPTION = Erlang (data-based) geo-services
+PROJECT_VERSION = 0.1.0
+
+# Core targets
+
+all:: $(ERLANG_MK)
+$(ERLANG_MK):
+	curl https://erlang.mk/erlang.mk | make -f -
+
+include $(ERLANG_MK)
+
+# Custom targets
+
+.PHONY: data
 .SECONDARY:
-
-rebar:  CMD = compile
-rebar:
-	$(REBAR) $(CMD)
 
 data:   priv/geoip priv/geonames/allCountries.txt
 
